@@ -1,8 +1,8 @@
 import { useCartContext } from './CartContextProvider';
-import { ICartProduct } from 'models';
+import { ICartProduct, ICartTotal } from 'models';
 
 const useCartTotal = () => {
-  const { total, setTotal } = useCartContext();
+  const { total, setTotal, promoDiscountPercent, appliedPromo } = useCartContext();
 
   const updateCartTotal = (products: ICartProduct[]) => {
     const productQuantity = products.reduce(
@@ -13,10 +13,14 @@ const useCartTotal = () => {
       0
     );
 
-    const totalPrice = products.reduce((sum: number, product: ICartProduct) => {
+    const subtotal = products.reduce((sum: number, product: ICartProduct) => {
       sum += product.price * product.quantity;
       return sum;
     }, 0);
+
+    const discountRate = (promoDiscountPercent || 0) / 100;
+    const discountPrice = Number((subtotal * discountRate).toFixed(2));
+    const totalPrice = Number((subtotal - discountPrice).toFixed(2));
 
     const installments = products.reduce(
       (greater: number, product: ICartProduct) => {
@@ -27,7 +31,7 @@ const useCartTotal = () => {
       0
     );
 
-    const total = {
+    const updatedTotal: ICartTotal = {
       productQuantity,
       installments,
       totalPrice,
@@ -35,7 +39,14 @@ const useCartTotal = () => {
       currencyFormat: '$',
     };
 
-    setTotal(total);
+    if (discountPrice > 0) {
+      updatedTotal.discountPrice = discountPrice;
+    }
+    if (appliedPromo) {
+      updatedTotal.appliedPromo = appliedPromo;
+    }
+
+    setTotal(updatedTotal);
   };
 
   return {

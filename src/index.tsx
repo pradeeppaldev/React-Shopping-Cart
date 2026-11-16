@@ -9,6 +9,10 @@ import GlobalStyle from 'commons/style/global-style';
 /* Context Providers */
 import { ProductsProvider } from 'contexts/products-context';
 import { CartProvider } from 'contexts/cart-context';
+import { WishlistProvider } from 'contexts/wishlist-context';
+import { GamificationProvider } from 'contexts/gamification-context';
+import { UserProvider } from 'contexts/user-context';
+import ErrorBoundary from 'components/ErrorBoundary';
 
 import App from 'components/App';
 
@@ -17,13 +21,21 @@ const container = ReactDOMClient.createRoot(root);
 
 container.render(
   <StrictMode>
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <ProductsProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </ProductsProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <ProductsProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <GamificationProvider>
+                <UserProvider>
+                  <App />
+                </UserProvider>
+              </GamificationProvider>
+            </CartProvider>
+          </WishlistProvider>
+        </ProductsProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   </StrictMode>
 );

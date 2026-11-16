@@ -3,13 +3,21 @@ import useCartProducts from './useCartProducts';
 import useCartTotal from './useCartTotal';
 
 const useCart = () => {
-  const { isOpen, setIsOpen } = useCartContext();
+  const {
+    isOpen,
+    setIsOpen,
+    appliedPromo,
+    setAppliedPromo,
+    promoDiscountPercent,
+    setPromoDiscountPercent,
+  } = useCartContext();
   const {
     products,
     addProduct,
     removeProduct,
     increaseProductQuantity,
     decreaseProductQuantity,
+    clearCart,
   } = useCartProducts();
   const { total, updateCartTotal } = useCartTotal();
 
@@ -25,8 +33,13 @@ const useCart = () => {
     removeProduct,
     increaseProductQuantity,
     decreaseProductQuantity,
+    clearCart,
     total,
     updateCartTotal,
+    appliedPromo,
+    setAppliedPromo,
+    promoDiscountPercent,
+    setPromoDiscountPercent,
   };
 };
 

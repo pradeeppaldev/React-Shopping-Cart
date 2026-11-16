@@ -1,6 +1,5 @@
 import { ICartProduct } from 'models';
 import CartProduct from './CartProduct';
-
 import * as S from './style';
 
 interface IProps {
@@ -11,7 +10,12 @@ const CartProducts = ({ products }: IProps) => {
   return (
     <S.Container>
       {products?.length ? (
-        products.map((p) => <CartProduct product={p} key={p.sku} />)
+        products.map((p, index) => (
+          <CartProduct
+            product={p}
+            key={`${p.sku}-${p.selectedSize || ''}-${p.selectedColor || ''}-${index}`}
+          />
+        ))
       ) : (
         <S.CartProductsEmpty>
           Add some products in the cart <br />

@@ -6,12 +6,23 @@ const useCartProducts = () => {
   const { products, setProducts } = useCartContext();
   const { updateCartTotal } = useCartTotal();
 
+  const isMatch = (a: ICartProduct, b: ICartProduct): boolean => {
+    if (a.id !== b.id) return false;
+    if (a.selectedSize || b.selectedSize) {
+      if (a.selectedSize !== b.selectedSize) return false;
+    }
+    if (a.selectedColor || b.selectedColor) {
+      if (a.selectedColor !== b.selectedColor) return false;
+    }
+    return true;
+  };
+
   const updateQuantitySafely = (
     currentProduct: ICartProduct,
     targetProduct: ICartProduct,
     quantity: number
   ): ICartProduct => {
-    if (currentProduct.id === targetProduct.id) {
+    if (isMatch(currentProduct, targetProduct)) {
       return Object.assign({
         ...currentProduct,
         quantity: currentProduct.quantity + quantity,
@@ -23,8 +34,8 @@ const useCartProducts = () => {
 
   const addProduct = (newProduct: ICartProduct) => {
     let updatedProducts;
-    const isProductAlreadyInCart = products.some(
-      (product: ICartProduct) => newProduct.id === product.id
+    const isProductAlreadyInCart = products.some((product: ICartProduct) =>
+      isMatch(product, newProduct)
     );
 
     if (isProductAlreadyInCart) {
@@ -41,7 +52,7 @@ const useCartProducts = () => {
 
   const removeProduct = (productToRemove: ICartProduct) => {
     const updatedProducts = products.filter(
-      (product: ICartProduct) => product.id !== productToRemove.id
+      (product: ICartProduct) => !isMatch(product, productToRemove)
     );
 
     setProducts(updatedProducts);
@@ -66,12 +77,18 @@ const useCartProducts = () => {
     updateCartTotal(updatedProducts);
   };
 
+  const clearCart = () => {
+    setProducts([]);
+    updateCartTotal([]);
+  };
+
   return {
     products,
     addProduct,
     removeProduct,
     increaseProductQuantity,
     decreaseProductQuantity,
+    clearCart,
   };
 };
 
